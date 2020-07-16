@@ -30,7 +30,7 @@ jobs:
 #           - snyk_install_method: npm
 #             node_version: 8
           - snyk_install_method: npm
-            node_version: 10
+            node_version: 12
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
