@@ -16,13 +16,13 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  smote_test:
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        snyk_install_method: [binary] # npm, binary
+        snyk_install_method: [npm, binary]
         node_version: [8, 10, 12]
         exclude:
           - snyk_install_method: binary
@@ -57,6 +57,5 @@ jobs:
         sudo mv ./snyk /usr/local/bin/snyk
         which snyk
 
-    # Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: echo Hello, world!
+    - name: Run shellspec tests
+      run: echo "run the shellspec tests here"
