@@ -21,16 +21,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest] # windows-latest
         snyk_install_method: [npm] # binary
         node_version: [10]
-#         include:
+        include:
 #           # includes a new variable of npm with a value of 2
 #           # for the matrix leg matching the os and version
 #           - snyk_install_method: npm
 #             node_version: 8
-#           - snyk_install_method: npm
-#             node_version: 10
+          - snyk_install_method: npm
+            node_version: 10
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
