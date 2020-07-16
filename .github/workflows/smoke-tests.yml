@@ -54,7 +54,8 @@ jobs:
         snyk_cli_dl_linux="https://github.com/snyk/snyk/releases/download/${latest_version}/snyk-linux"
         curl -Lo ./snyk $snyk_cli_dl_linux
         chmod -R +x ./snyk
-        mv ./snyk ~/bin/snyk
+        sudo mv ./snyk /usr/local/bin/snyk
+        which snyk
 
     # Runs a single command using the runners shell
     - name: Run a one-line script
