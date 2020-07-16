@@ -30,15 +30,6 @@ jobs:
           - snyk_install_method: binary
             node_version: 10
 
-#         include:
-#           - snyk_install_method: npm
-#             install_method: node_js
-
-#           # includes a new variable of npm with a value of 2
-#           # for the matrix leg matching the os and version
-#           - snyk_install_method: npm
-#             node_version: 8
-
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
@@ -59,6 +50,12 @@ jobs:
       if: ${{ matrix.snyk_install_method == 'binary' }}
       run: |
         echo "install snyk with binary"
+        latest_version=$(curl -Is "https://github.com/snyk/snyk/releases/latest" | grep "Location" | sed s#.*tag/##g | tr -d "\r")
+        snyk_cli_dl_linux="https://github.com/snyk/snyk/releases/download/${latest_version}/snyk-linux"
+        curl -Lo ./snyk $snyk_cli_dl_linux
+        chmod -R +x ./snyk
+        mv ./snyk /usr/local/bin
+
 
     # Runs a single command using the runners shell
     - name: Run a one-line script
