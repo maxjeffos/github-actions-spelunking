@@ -22,10 +22,22 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        snyk_install_method: [npm, binary]
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+    
+    - name: Install Snyk with npm
+      if: ${{ matrix.snyk_install_method == 'npm' }}
+      run: |
+        echo "install snyk with npm"
+        # npm install -g snyk
+
+    - name: Install Snyk with binary
+      if: ${{ matrix.snyk_install_method == 'binary' }}
+      run: |
+        echo "install snyk with binary"
 
     # Runs a single command using the runners shell
     - name: Run a one-line script
