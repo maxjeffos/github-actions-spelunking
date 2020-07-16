@@ -25,8 +25,8 @@ jobs:
         snyk_install_method: [npm] # binary
         node_version: [10]
         include:
-          - node_version: 12
-            snyk_install_method: npm
+          - snyk_install_method: npm
+            install_method: node_js
 
 #           # includes a new variable of npm with a value of 2
 #           # for the matrix leg matching the os and version
@@ -46,6 +46,7 @@ jobs:
       if: ${{ matrix.snyk_install_method == 'npm' }}
       run: |
         echo "node_version: ${{ matrix.node_version }}"
+        echo "install_method: ${{ install_method }}"
         node -v
         echo "install snyk with npm"
         npm install -g snyk
