@@ -29,8 +29,8 @@ jobs:
 #           # for the matrix leg matching the os and version
 #           - snyk_install_method: npm
 #             node_version: 8
-          - snyk_install_method: npm
-            node_version: 12
+          - node_version: 12
+            snyk_install_method: npm
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
