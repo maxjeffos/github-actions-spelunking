@@ -25,12 +25,14 @@ jobs:
         snyk_install_method: [npm] # binary
         node_version: [10]
         include:
+          - node_version: 12
+            snyk_install_method: npm
+
 #           # includes a new variable of npm with a value of 2
 #           # for the matrix leg matching the os and version
 #           - snyk_install_method: npm
 #             node_version: 8
-          - node_version: 12
-            snyk_install_method: npm
+
 
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
