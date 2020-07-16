@@ -50,7 +50,6 @@ jobs:
       if: ${{ matrix.snyk_install_method == 'npm' }}
       run: |
         echo "node_version: ${{ matrix.node_version }}"
-        echo "install_method: ${{ install_method }}"
         node -v
         echo "install snyk with npm"
         npm install -g snyk
