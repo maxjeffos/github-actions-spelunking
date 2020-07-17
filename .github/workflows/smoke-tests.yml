@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
@@ -15,23 +13,31 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
+  # This workflow contains a single job
   smote_test:
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        snyk_install_method: [npm, binary]
+        os: [ubuntu-latest]
+        # os: [ubuntu-latest, macos-latest, windows-latest]
+        snyk_install_method: [npm]
+        # snyk_install_method: [binary, npm]
         node_version: [8, 10, 12]
         exclude:
           - snyk_install_method: binary
             node_version: 8
           - snyk_install_method: binary
             node_version: 10
+        include:
+          - snyk_install_method: binary
+            os: ubuntu-latest
+            snyk_cli_dl_file: snyk-linux
+          - snyk_install_method: binary
+            os: macos-latest
+            snyk_cli_dl_file: snyk-macos
 
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
     
     - uses: actions/setup-node@v1
@@ -46,16 +52,37 @@ jobs:
         echo "install snyk with npm"
         npm install -g snyk
 
-    - name: Install Snyk with binary - non-Windows
+    - name: Install Snyk with binary - non-windows
       if: ${{ matrix.snyk_install_method == 'binary' && matrix.os != 'windows-latest' }}
       run: |
         echo "install snyk with binary"
-        latest_version=$(curl -Is "https://github.com/snyk/snyk/releases/latest" | grep "Location" | sed s#.*tag/##g | tr -d "\r")
-        snyk_cli_dl_linux="https://github.com/snyk/snyk/releases/download/${latest_version}/snyk-linux"
-        curl -Lo ./snyk $snyk_cli_dl_linux
-        chmod -R +x ./snyk
-        sudo mv ./snyk /usr/local/bin/snyk
-        which snyk
+        export latest_version=$(curl -Is "https://github.com/snyk/snyk/releases/latest" | grep location | sed s#.*tag/##g | tr -d "\r")
+        echo "latest_version: ${latest_version}"
+        snyk_cli_dl_linux="https://github.com/snyk/snyk/releases/download/${latest_version}/${{ matrix.snyk_cli_dl_file }}"
+        echo "snyk_cli_dl_linux: ${snyk_cli_dl_linux}"
+        curl -Lo ./snyk-cli $snyk_cli_dl_linux
+        echo "snyk_cli_dl_linux: ${snyk_cli_dl_linux}"
+        chmod -R +x ./snyk-cli
+        sudo mv ./snyk-cli /usr/local/bin/snyk
+        snyk --version
+
+    - name: Install Shellspec - non-windows
+      if: ${{ matrix.os != 'windows-latest' }}
+      run: |
+        curl -fsSL https://git.io/shellspec | sh -s -- -y
+        sudo ln -s ${HOME}/.local/lib/shellspec/shellspec /usr/local/bin/shellspec
+        ls -la ${HOME}/.local/lib/shellspec
+        echo "shellspec symlink:"
+        ls -la /usr/local/bin/shellspec
+        /usr/local/bin/shellspec --version
+        which shellspec
+        shellspec --version
 
     - name: Run shellspec tests
-      run: echo "run the shellspec tests here"
+      if: ${{ matrix.os != 'windows-latest' }}
+      working-directory: test/smoke
+      env:
+        SMOKE_TESTS_SNYK_TOKEN: ${{ secrets.SMOKE_TESTS_SNYK_TOKEN }}
+      run: |
+        export EXPECTED_SNYK_VERSION=$(snyk --version)
+        shellspec -f d
