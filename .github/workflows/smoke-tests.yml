@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-  pull_request:
+  # pull_request:
 #   schedule:
 #     - cron: '0 * * * *'
 
@@ -19,10 +19,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         # os: [ubuntu-latest, macos-latest, windows-latest]
-        snyk_install_method: [npm]
-        # snyk_install_method: [binary, npm]
+        snyk_install_method: [binary, npm]
         node_version: [8, 10, 12]
         exclude:
           - snyk_install_method: binary
